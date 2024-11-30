@@ -1,0 +1,13 @@
+.card {
+    border: none;
+    border-radius: 15px;
+    background: rgba(255, 255, 255, 0.9);
+}
+
+.card-body {
+    padding: 3rem;
+}
+
+body {
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+}
