@@ -32,12 +32,6 @@ jobs:
           name: website-dist
           path: dist/
 
-      - name: Upload site
-        uses: actions/upload-artifact@v4
-        with:
-          name: website-zip
-          path: artifact.zip
-
   infrastructure:
     needs: build
     runs-on: ubuntu-latest
@@ -132,13 +126,7 @@ jobs:
           # Desplegar sitio web
           aws s3 sync dist/ "s3://$WEBSITE_BUCKET/"
 
-      - name: Download artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: website-zip
-          path: artifact.zip
-
-      - name: Deploy zip to S3
+      - name: Copy zip to S3
         env:
           ARTIFACTS_BUCKET: ${{ needs.infrastructure.outputs.artifacts_bucket }}
         shell: bash
@@ -151,7 +139,7 @@ jobs:
           echo "Artifacts bucket: $ARTIFACTS_BUCKET"
           
           # Copiar artefacto
-          aws s3 cp artifact.zip "s3://$ARTIFACTS_BUCKET/"
+          aws s3 cp website-dist.zip "s3://$ARTIFACTS_BUCKET/"
 
   release:
     needs: deploy

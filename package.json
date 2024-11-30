@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Demo application for GitHub Actions pipeline",
   "scripts": {
-    "build": "mkdir -p dist && cp -r src/* dist/ && zip -r artifact.zip dist/",
+    "build": "mkdir -p dist && cp -r src/* dist/",
     "test": "echo \"No tests specified\" && exit 0"
   },
   "author": "",
