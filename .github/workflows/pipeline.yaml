@@ -130,7 +130,8 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: website-dist
-          path: dist
+          path: website-dist.zip
+          extract: false
 
       - name: Copy zip to S3
         env:
