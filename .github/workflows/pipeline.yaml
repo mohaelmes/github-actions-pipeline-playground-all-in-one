@@ -49,9 +49,10 @@ jobs:
           aws-region: ${{ secrets.AWS_REGION }}
 
       - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v2
+        uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: ${{ env.TF_VERSION }}
+          terraform_wrapper: false
 
       - name: Terraform Init
         working-directory: ./iac
@@ -89,7 +90,7 @@ jobs:
           echo "Website bucket: ${{ steps.terraform-outputs.outputs.website_bucket }}"
           echo "Artifacts bucket: ${{ steps.terraform-outputs.outputs.artifacts_bucket }}"
           
-          cat $GITHUB_OUTPUT          
+          cat $GITHUB_OUTPUT
 
   deploy:
     needs: infrastructure
