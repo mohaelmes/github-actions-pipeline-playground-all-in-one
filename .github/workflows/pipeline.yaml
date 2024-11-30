@@ -1,0 +1,112 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+env:
+  AWS_REGION: ${{ secrets.AWS_REGION }}
+  TF_VERSION: '1.5.0'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Build
+        run: |
+          npm install
+          npm run build
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: website-dist
+          path: dist/
+
+  infrastructure:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v3
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: ${{ env.TF_VERSION }}
+
+      - name: Terraform Init
+        working-directory: ./iac
+        run: terraform init
+
+      - name: Terraform Plan
+        working-directory: ./iac
+        run: terraform plan -out=tfplan
+
+      - name: Terraform Apply
+        working-directory: ./iac
+        run: terraform apply -auto-approve tfplan
+
+  deploy:
+    needs: infrastructure
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v3
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Download artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: website-dist
+          path: dist
+
+      - name: Deploy to S3
+        run: |
+          # Obtener nombre del bucket web del estado de Terraform
+          cd iac
+          WEBSITE_BUCKET=$(terraform output -raw website_bucket_name)
+          ARTIFACTS_BUCKET=$(terraform output -raw artifacts_bucket_name)
+          cd ..
+          
+          # Desplegar sitio web
+          aws s3 sync dist/ s3://$WEBSITE_BUCKET/
+          
+          # Copiar artefacto
+          aws s3 cp artifact.zip s3://$ARTIFACTS_BUCKET/
+
+  release:
+    needs: deploy
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Create Tag
+        run: |
+          # Crear tag con timestamp
+          TAG="release-$(date +'%Y%m%d-%H%M%S')"
+          git tag $TAG
+          git push origin $TAG
