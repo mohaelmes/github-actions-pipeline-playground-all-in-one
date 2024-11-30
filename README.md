@@ -36,6 +36,7 @@ Este repositorio contiene una implementación de referencia de un pipeline de CI
                    "s3:ListBucket",
                    "s3:DeleteObject",
                    "s3:PutBucketPolicy",
+                   "s3:PutBucketVersioning",
                    "s3:GetBucketPolicy",
                    "s3:PutBucketWebsite",
                    "s3:CreateBucket",
@@ -53,6 +54,7 @@ Este repositorio contiene una implementación de referencia de un pipeline de CI
            {
                "Effect": "Allow",
                "Action": [
+                   "dynamodb:CreateTable",
                    "dynamodb:PutItem",
                    "dynamodb:GetItem",
                    "dynamodb:DeleteItem",
@@ -66,8 +68,18 @@ Este repositorio contiene una implementación de referencia de un pipeline de CI
 
 3. **Preparar Backend de Terraform**
    ```bash
-   # Ejecutar script de setup que creará el bucket S3 y tabla DynamoDB para el backend
-   chmod +x scripts/setup.sh
+   
+   # Activa unas credenciales de AWS:
+   
+   ## opción 1 (con aws configure ...)
+   export AWS_DEFAULT_PROFILE=nombre_profile
+   
+   ## opción 2 (con variables de entorno)
+   export AWS_ACCESS_KEY_ID=AKIAIOSFODNN7EXAMPLE
+   export AWS_SECRET_ACCESS_KEY=wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
+   export AWS_DEFAULT_REGION=eu-west-1
+   
+   # Ejecutar script de setup que creará el bucket S3 y tabla DynamoDB para el backend   
    ./scripts/setup.sh
    
    # Tomar nota del nombre del bucket creado para el estado de Terraform
