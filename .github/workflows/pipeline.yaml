@@ -130,7 +130,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: website-dist
-          path: website-dist.zip
+          path: ./website-dist.zip
           extract: false
 
       - name: Copy zip to S3
@@ -145,8 +145,11 @@ jobs:
           # Verificación de las variables de entorno
           echo "Artifacts bucket: $ARTIFACTS_BUCKET"
           
+          ls -la
+          file website-dist.zip
+          
           # Copiar artefacto
-          aws s3 cp website-dist.zip "s3://$ARTIFACTS_BUCKET/"
+          aws s3 cp website-dist.zip "s3://${ARTIFACTS_BUCKET}/website-dist.zip"
 
   release:
     needs: deploy
