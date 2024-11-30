@@ -32,6 +32,12 @@ jobs:
           name: website-dist
           path: dist/
 
+      - name: Upload site
+        uses: actions/upload-artifact@v4
+        with:
+          name: website-zip
+          path: artifact.zip
+
   infrastructure:
     needs: build
     runs-on: ubuntu-latest
@@ -111,37 +117,41 @@ jobs:
           name: website-dist
           path: dist
 
-      - name: Deploy to S3
+      - name: Deploy site to S3
         env:
           WEBSITE_BUCKET: ${{ needs.infrastructure.outputs.website_bucket }}
-          ARTIFACTS_BUCKET: ${{ needs.infrastructure.outputs.artifacts_bucket }}
         shell: bash
         run: |
           
           # Verificación de los outputs
           echo "Website bucket: ${{ steps.terraform-outputs.outputs.website_bucket }}"
+          
+          # Verificación de las variables de entorno
+          echo "Website bucket: $WEBSITE_BUCKET          
+         
+          # Desplegar sitio web
+          aws s3 sync dist/ "s3://$WEBSITE_BUCKET/"
+
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: website-zip
+          path: artifact.zip
+
+      - name: Deploy zip to S3
+        env:
+          ARTIFACTS_BUCKET: ${{ needs.infrastructure.outputs.artifacts_bucket }}
+        shell: bash
+        run: |
+          
+          # Verificación de los outputs
           echo "Artifacts bucket: ${{ steps.terraform-outputs.outputs.artifacts_bucket }}"
           
           # Verificación de las variables de entorno
-          echo "Website bucket: $WEBSITE_BUCKET
           echo "Artifacts bucket: $ARTIFACTS_BUCKET
-          
-          # Verificación de variables
-          echo "Deploying to buckets:"
-          echo "Website bucket: $WEBSITE_BUCKET"
-          echo "Artifacts bucket: $ARTIFACTS_BUCKET"
-          
-          # Desplegar sitio web
-          aws s3 sync dist/ "s3://$WEBSITE_BUCKET/"
           
           # Copiar artefacto
           aws s3 cp artifact.zip "s3://$ARTIFACTS_BUCKET/"
-          
-          # Desplegar sitio web
-          aws s3 sync dist/ s3://$WEBSITE_BUCKET/
-          
-          # Copiar artefacto
-          aws s3 cp artifact.zip s3://$ARTIFACTS_BUCKET/
 
   release:
     needs: deploy
