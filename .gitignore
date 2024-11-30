@@ -1,0 +1,25 @@
+# Node.js
+node_modules/
+dist/
+artifact.zip
+
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfvars
+.terraformrc
+terraform.rc
+.terraform.lock.hcl
+tfplan
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
