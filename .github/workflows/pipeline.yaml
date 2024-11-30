@@ -69,14 +69,21 @@ jobs:
         working-directory: ./iac
         id: terraform-outputs
         run: |
-          WEBSITE_BUCKET=$(terraform output -raw website_bucket_name)
-          ARTIFACTS_BUCKET=$(terraform output -raw artifacts_bucket_name)
-          echo "website_bucket=${WEBSITE_BUCKET}" >> "$GITHUB_OUTPUT"
-          echo "artifacts_bucket=${ARTIFACTS_BUCKET}" >> "$GITHUB_OUTPUT"
-          # Debug output
-          echo "Captured buckets:"
-          echo "Website: ${WEBSITE_BUCKET}"
-          echo "Artifacts: ${ARTIFACTS_BUCKET}"
+          
+          echo $GITHUB_OUTPUT
+          
+          # Capturar outputs limpiando posible salida adicional
+          WEBSITE_BUCKET=$(terraform output -raw website_bucket_name | tr -d '\n')
+          ARTIFACTS_BUCKET=$(terraform output -raw artifacts_bucket_name | tr -d '\n')
+          
+          # Escribir al archivo de output de GitHub Actions
+          echo "website_bucket=$WEBSITE_BUCKET" >> "$GITHUB_OUTPUT"
+          echo "artifacts_bucket=$ARTIFACTS_BUCKET" >> "$GITHUB_OUTPUT"
+          
+          # Verificación
+          echo "Outputs capturados:"
+          echo "Website Bucket: $WEBSITE_BUCKET"
+          echo "Artifacts Bucket: $ARTIFACTS_BUCKET"
 
   deploy:
     needs: infrastructure
