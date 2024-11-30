@@ -56,6 +56,7 @@ Este repositorio contiene una implementación de referencia de un pipeline de CI
             "Effect": "Allow",
             "Action": [
                "dynamodb:CreateTable",
+               "dynamodb:DeleteTable",
                "dynamodb:PutItem",
                "dynamodb:GetItem",
                "dynamodb:DeleteItem",
