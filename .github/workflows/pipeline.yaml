@@ -127,7 +127,7 @@ jobs:
           echo "Website bucket: ${{ steps.terraform-outputs.outputs.website_bucket }}"
           
           # Verificación de las variables de entorno
-          echo "Website bucket: $WEBSITE_BUCKET          
+          echo "Website bucket: $WEBSITE_BUCKET"
          
           # Desplegar sitio web
           aws s3 sync dist/ "s3://$WEBSITE_BUCKET/"
@@ -148,7 +148,7 @@ jobs:
           echo "Artifacts bucket: ${{ steps.terraform-outputs.outputs.artifacts_bucket }}"
           
           # Verificación de las variables de entorno
-          echo "Artifacts bucket: $ARTIFACTS_BUCKET
+          echo "Artifacts bucket: $ARTIFACTS_BUCKET"
           
           # Copiar artefacto
           aws s3 cp artifact.zip "s3://$ARTIFACTS_BUCKET/"
