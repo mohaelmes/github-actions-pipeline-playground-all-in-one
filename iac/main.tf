@@ -10,9 +10,9 @@ terraform {
 
   backend "s3" {
     # Estos valores deben ser proporcionados durante terraform init
-    bucket         = "NOMBRE_BUCKET_ESTADO"
+    bucket         = "terraform-state-688476381437"
     key            = "terraform.tfstate"
-    region         = "REGION"
+    region         = "eu-west-1"
     dynamodb_table = "terraform-lock"
     encrypt        = true
   }
@@ -48,7 +48,10 @@ resource "aws_s3_bucket_public_access_block" "website" {
 }
 
 resource "aws_s3_bucket_policy" "website" {
+  depends_on = [aws_s3_bucket_public_access_block.website]
+
   bucket = aws_s3_bucket.website.id
+
   policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
