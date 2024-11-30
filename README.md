@@ -26,43 +26,44 @@ Este repositorio contiene una implementación de referencia de un pipeline de CI
 
    ```json
    {
-       "Version": "2012-10-17",
-       "Statement": [
-           {
-               "Effect": "Allow",
-               "Action": [
-                   "s3:PutObject",
-                   "s3:GetObject",
-                   "s3:ListBucket",
-                   "s3:DeleteObject",
-                   "s3:PutBucketPolicy",
-                   "s3:PutBucketVersioning",
-                   "s3:GetBucketPolicy",
-                   "s3:PutBucketWebsite",
-                   "s3:CreateBucket",
-                   "s3:DeleteBucket"
-               ],
-               "Resource": [
-                   "arn:aws:s3:::github-actions-pipeline-web-*",
-                   "arn:aws:s3:::github-actions-pipeline-web-*/*",
-                   "arn:aws:s3:::github-actions-pipeline-artifacts-*",
-                   "arn:aws:s3:::github-actions-pipeline-artifacts-*/*",
-                   "arn:aws:s3:::terraform-state-*",
-                   "arn:aws:s3:::terraform-state-*/*"
-               ]
-           },
-           {
-               "Effect": "Allow",
-               "Action": [
-                   "dynamodb:CreateTable",
-                   "dynamodb:PutItem",
-                   "dynamodb:GetItem",
-                   "dynamodb:DeleteItem",
-                   "dynamodb:UpdateItem"
-               ],
-               "Resource": "arn:aws:dynamodb:*:*:table/terraform-lock"
-           }
-       ]
+      "Version": "2012-10-17",
+      "Statement": [
+         {
+            "Effect": "Allow",
+            "Action": [
+               "s3:CreateBucket",
+               "s3:DeleteBucket",
+               "s3:ListBucket",
+               "s3:Get*",
+               "s3:*Object",
+               "s3:PutBucketPolicy",
+               "s3:PutBucketPublicAccessBlock",
+               "s3:PutBucketVersioning",
+               "s3:PutBucketWebsite",
+               "s3:GetBucketCORS",
+               "s3:PutBucketCORS"
+            ],
+            "Resource": [
+               "arn:aws:s3:::github-actions-pipeline-web-*",
+               "arn:aws:s3:::github-actions-pipeline-web-*/*",
+               "arn:aws:s3:::github-actions-pipeline-artifacts-*",
+               "arn:aws:s3:::github-actions-pipeline-artifacts-*/*",
+               "arn:aws:s3:::terraform-state-*",
+               "arn:aws:s3:::terraform-state-*/*"
+            ]
+         },
+         {
+            "Effect": "Allow",
+            "Action": [
+               "dynamodb:CreateTable",
+               "dynamodb:PutItem",
+               "dynamodb:GetItem",
+               "dynamodb:DeleteItem",
+               "dynamodb:UpdateItem"
+            ],
+            "Resource": "arn:aws:dynamodb:*:*:table/terraform-lock"
+         }
+      ]
    }
    ```
 
@@ -87,7 +88,7 @@ Este repositorio contiene una implementación de referencia de un pipeline de CI
 
 4. **Primer Despliegue Manual**
    ```bash
-   # Configurar el backend de Terraform
+   # Configurar el backend de Terraform e inicializar el backend remoto
    cd iac
    terraform init
    terraform plan
@@ -96,7 +97,7 @@ Este repositorio contiene una implementación de referencia de un pipeline de CI
 
 5. **Configurar Secretos en GitHub**
 
-   En tu repositorio de GitHub, navega a Settings > Secrets and variables > Actions y añade:
+   En tu repositorio de GitHub, navega a Settings > Secrets and variables > Actions y añade estos tres secretos de repositorio:
    - `AWS_ACCESS_KEY_ID`: Tu Access Key del usuario IAM creado
    - `AWS_SECRET_ACCESS_KEY`: Tu Secret Access Key del usuario IAM creado
    - `AWS_REGION`: La región de AWS donde desplegarás (ej: eu-west-1)
