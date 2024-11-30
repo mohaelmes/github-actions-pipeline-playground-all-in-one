@@ -35,6 +35,9 @@ jobs:
   infrastructure:
     needs: build
     runs-on: ubuntu-latest
+    outputs:
+      website_bucket: ${{ steps.terraform-outputs.outputs.website_bucket }}
+      artifacts_bucket: ${{ steps.terraform-outputs.outputs.artifacts_bucket }}
     steps:
       - uses: actions/checkout@v3
 
@@ -62,6 +65,13 @@ jobs:
         working-directory: ./iac
         run: terraform apply -auto-approve tfplan
 
+      - name: Get Terraform Outputs
+        working-directory: ./iac
+        id: terraform-outputs
+        run: |
+          echo "website_bucket=$(terraform output -raw website_bucket_name)" >> $GITHUB_OUTPUT
+          echo "artifacts_bucket=$(terraform output -raw artifacts_bucket_name)" >> $GITHUB_OUTPUT
+
   deploy:
     needs: infrastructure
     runs-on: ubuntu-latest
@@ -82,12 +92,10 @@ jobs:
           path: dist
 
       - name: Deploy to S3
+        env:
+          WEBSITE_BUCKET: ${{ needs.infrastructure.outputs.website_bucket }}
+          ARTIFACTS_BUCKET: ${{ needs.infrastructure.outputs.artifacts_bucket }}
         run: |
-          # Obtener nombre del bucket web del estado de Terraform
-          cd iac
-          WEBSITE_BUCKET=$(terraform output -raw website_bucket_name)
-          ARTIFACTS_BUCKET=$(terraform output -raw artifacts_bucket_name)
-          cd ..
           
           # Desplegar sitio web
           aws s3 sync dist/ s3://$WEBSITE_BUCKET/
