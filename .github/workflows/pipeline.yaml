@@ -74,9 +74,22 @@ jobs:
           terraform output -raw website_bucket_name > website_bucket.txt
           terraform output -raw artifacts_bucket_name > artifacts_bucket.txt
           
+          # Verificación de variables
+          echo "Website bucket name: $(cat website_bucket.txt)"
+          echo "Artifacts bucket name: $(cat artifacts_bucket.txt)"
+          
           # Leer los archivos y establecer los outputs
           echo "website_bucket=$(cat website_bucket.txt)" >> "$GITHUB_OUTPUT"
           echo "artifacts_bucket=$(cat artifacts_bucket.txt)" >> "$GITHUB_OUTPUT"
+          
+          # Eliminar los archivos temporales
+          rm website_bucket.txt artifacts_bucket.txt
+          
+          # Verificación de outputs
+          echo "Website bucket: ${{ steps.terraform-outputs.outputs.website_bucket }}"
+          echo "Artifacts bucket: ${{ steps.terraform-outputs.outputs.artifacts_bucket }}"
+          
+          cat $GITHUB_OUTPUT          
 
   deploy:
     needs: infrastructure
@@ -103,6 +116,15 @@ jobs:
           ARTIFACTS_BUCKET: ${{ needs.infrastructure.outputs.artifacts_bucket }}
         shell: bash
         run: |
+          
+          # Verificación de los outputs
+          echo "Website bucket: ${{ steps.terraform-outputs.outputs.website_bucket }}"
+          echo "Artifacts bucket: ${{ steps.terraform-outputs.outputs.artifacts_bucket }}"
+          
+          # Verificación de las variables de entorno
+          echo "Website bucket: $WEBSITE_BUCKET
+          echo "Artifacts bucket: $ARTIFACTS_BUCKET
+          
           # Verificación de variables
           echo "Deploying to buckets:"
           echo "Website bucket: $WEBSITE_BUCKET"
