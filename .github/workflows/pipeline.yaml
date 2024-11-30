@@ -68,22 +68,15 @@ jobs:
       - name: Get Terraform Outputs
         working-directory: ./iac
         id: terraform-outputs
+        shell: bash
         run: |
+          # Guardar los valores en archivos temporales
+          terraform output -raw website_bucket_name > website_bucket.txt
+          terraform output -raw artifacts_bucket_name > artifacts_bucket.txt
           
-          echo $GITHUB_OUTPUT
-          
-          # Capturar outputs limpiando posible salida adicional
-          WEBSITE_BUCKET=$(terraform output -raw website_bucket_name | tr -d '\n')
-          ARTIFACTS_BUCKET=$(terraform output -raw artifacts_bucket_name | tr -d '\n')
-          
-          # Escribir al archivo de output de GitHub Actions
-          echo "website_bucket=$WEBSITE_BUCKET" >> "$GITHUB_OUTPUT"
-          echo "artifacts_bucket=$ARTIFACTS_BUCKET" >> "$GITHUB_OUTPUT"
-          
-          # Verificación
-          echo "Outputs capturados:"
-          echo "Website Bucket: $WEBSITE_BUCKET"
-          echo "Artifacts Bucket: $ARTIFACTS_BUCKET"
+          # Leer los archivos y establecer los outputs
+          echo "website_bucket=$(cat website_bucket.txt)" >> "$GITHUB_OUTPUT"
+          echo "artifacts_bucket=$(cat artifacts_bucket.txt)" >> "$GITHUB_OUTPUT"
 
   deploy:
     needs: infrastructure
@@ -105,16 +98,21 @@ jobs:
           path: dist
 
       - name: Deploy to S3
+        env:
+          WEBSITE_BUCKET: ${{ needs.infrastructure.outputs.website_bucket }}
+          ARTIFACTS_BUCKET: ${{ needs.infrastructure.outputs.artifacts_bucket }}
+        shell: bash
         run: |
+          # Verificación de variables
           echo "Deploying to buckets:"
-          echo "Website bucket: ${{ needs.infrastructure.outputs.website_bucket }}"
-          echo "Artifacts bucket: ${{ needs.infrastructure.outputs.artifacts_bucket }}"
+          echo "Website bucket: $WEBSITE_BUCKET"
+          echo "Artifacts bucket: $ARTIFACTS_BUCKET"
           
           # Desplegar sitio web
-          aws s3 sync dist/ s3://${{ needs.infrastructure.outputs.website_bucket }}/
+          aws s3 sync dist/ "s3://$WEBSITE_BUCKET/"
           
           # Copiar artefacto
-          aws s3 cp artifact.zip s3://${{ needs.infrastructure.outputs.artifacts_bucket }}/
+          aws s3 cp artifact.zip "s3://$ARTIFACTS_BUCKET/"
           
           # Desplegar sitio web
           aws s3 sync dist/ s3://$WEBSITE_BUCKET/
