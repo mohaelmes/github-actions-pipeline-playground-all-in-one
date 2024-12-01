@@ -139,3 +139,6 @@ También deberás eliminar manualmente:
 - El bucket de estado de Terraform
 - La tabla DynamoDB de bloqueo
 
+## FAQ
+
+Puede existir un bloqueo de a nivel de cuenta para que los bucket de S3 no estén públicos, en este caso se desactiva temporalmente y se vuelve a activar una vez finalizada.
