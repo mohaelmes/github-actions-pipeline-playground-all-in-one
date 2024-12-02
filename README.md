@@ -68,6 +68,10 @@ Este repositorio contiene una implementación de referencia de un pipeline de CI
    }
    ```
 
+![image](https://github.com/user-attachments/assets/fb4ad0fa-5419-4258-b2b1-8dab4186726e)
+![image](https://github.com/user-attachments/assets/49d84776-55d3-46f2-8c71-8ac8ebd727ce)
+
+
 3. **Preparar Backend de Terraform**
    ```bash
    
