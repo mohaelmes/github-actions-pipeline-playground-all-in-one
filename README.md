@@ -163,6 +163,7 @@ terraform destroy
 También deberás eliminar manualmente:
 - El bucket de estado de Terraform
 - La tabla DynamoDB de bloqueo
+![image](https://github.com/user-attachments/assets/08376a54-b8da-49c5-bb00-0621af38a483)
 
 ## FAQ
 
