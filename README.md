@@ -158,6 +158,7 @@ Para evitar costos innecesarios, recuerda eliminar los recursos cuando ya no los
 cd iac
 terraform destroy
 ```
+![image](https://github.com/user-attachments/assets/41e1e1b3-9c96-43a1-92a2-d912a026ecd9)
 
 También deberás eliminar manualmente:
 - El bucket de estado de Terraform
