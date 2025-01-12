@@ -107,6 +107,17 @@ Nos daba error el LocationConstraint:
    terraform plan
    terraform apply
    ```
+Fixing main.tf:
+![image](https://github.com/user-attachments/assets/94dac8b3-e3d7-47b1-a535-980a5a8e1ddf)
+![image](https://github.com/user-attachments/assets/696506ad-6e0c-45ea-864f-dd30a0c61591)
+
+![image](https://github.com/user-attachments/assets/2dfcfb57-d2f7-4a0d-b6a6-3efb9d6f3ae8)
+![image](https://github.com/user-attachments/assets/d6d5c6aa-b88b-4a4b-9edb-2952b87574b5)
+![image](https://github.com/user-attachments/assets/a89bc6a1-9f10-4004-8f60-d11b9fb69111)
+![image](https://github.com/user-attachments/assets/3a171019-5e6f-40b9-ac56-d49422c00e9a)
+![image](https://github.com/user-attachments/assets/f3e42b0c-6d6e-4049-b22b-144274de7139)
+
+
 
 5. **Configurar Secretos en GitHub**
 
@@ -114,6 +125,7 @@ Nos daba error el LocationConstraint:
    - `AWS_ACCESS_KEY_ID`: Tu Access Key del usuario IAM creado
    - `AWS_SECRET_ACCESS_KEY`: Tu Secret Access Key del usuario IAM creado
    - `AWS_REGION`: La región de AWS donde desplegarás (ej: eu-west-1)
+![image](https://github.com/user-attachments/assets/6d173b06-4dc9-4b80-8585-3e06378b0a71)
 
 ## Uso del Pipeline
 
