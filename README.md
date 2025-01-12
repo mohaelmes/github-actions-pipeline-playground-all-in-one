@@ -90,6 +90,14 @@ Este repositorio contiene una implementación de referencia de un pipeline de CI
    
    # Tomar nota del nombre del bucket creado para el estado de Terraform
    ```
+![image](https://github.com/user-attachments/assets/cdc489c3-fc04-4160-aba5-a236429f20bb)
+
+Fixing errors:
+![image](https://github.com/user-attachments/assets/63f53c5c-3f83-4256-b249-3e55aa992b82)
+
+Nos daba error el LocationConstraint:
+![image](https://github.com/user-attachments/assets/c6427a1c-8ddf-453b-a480-c6c09331cd11)
+
 
 4. **Primer Despliegue Manual**
    ```bash
